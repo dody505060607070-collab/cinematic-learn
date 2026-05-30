@@ -5,9 +5,9 @@ export const Route = createFileRoute("/payment")({
   head: () => ({
     meta: [
       { title: "Get Access — AbdelRahman Studio" },
-      { name: "description", content: "Submit your payment proof to receive manually-verified access to the private course library." },
+      { name: "description", content: "Submit your payment proof to receive manually-verified access to private masterclasses on web design, web dev, graphic design, and branding." },
       { property: "og:title", content: "Get Access — AbdelRahman Studio" },
-      { property: "og:description", content: "Manual verification. Lifetime access." },
+      { property: "og:description", content: "Manual verification. Lifetime access to design, dev & branding courses." },
     ],
   }),
   component: PaymentPage,
@@ -24,7 +24,7 @@ function PaymentPage() {
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Step 01</p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">Get Access</h1>
           <p className="mt-6 text-lg text-muted-foreground">
-            One-time payment. Lifetime access to the full private library.
+            One-time payment. Lifetime access to masterclasses on web design, web development, graphic design, and branding.
           </p>
 
           <div className="mt-12 p-8 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-xl text-left shadow-[var(--shadow-elegant)]">
