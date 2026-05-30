@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { getLessons, useStudioStore } from "@/lib/studio-store";
 
 export const Route = createFileRoute("/videos")({
   head: () => ({
@@ -12,19 +13,10 @@ export const Route = createFileRoute("/videos")({
   component: VideosPage,
 });
 
-const LESSONS = [
-  { title: "01 · Web Design Foundations", id: "dQw4w9WgXcQ" },
-  { title: "02 · Web Development — From Zero to Code", id: "5qap5aO4i9A" },
-  { title: "03 · Graphic Design Principles", id: "jfKfPfyJRdk" },
-  { title: "04 · Typography, Layout & Color", id: "9bZkp7q19f0" },
-  { title: "05 · What Is Branding", id: "kXYiU_JCYtU" },
-  { title: "06 · How to Build a Brand from Scratch", id: "hTWKbfoikeg" },
-  { title: "07 · How to Make Your Brand Successful", id: "ZbZSe6N_BXs" },
-];
-
 function VideosPage() {
   const navigate = useNavigate();
   const [allowed, setAllowed] = useState(false);
+  const lessons = useStudioStore(getLessons);
 
   useEffect(() => {
     try {
@@ -52,13 +44,13 @@ function VideosPage() {
           </div>
 
           <div className="space-y-12">
-            {LESSONS.map((lesson, i) => (
+            {lessons.map((lesson, i) => (
               <article key={lesson.id + i} className="animate-fade-in">
                 <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-4">{lesson.title}</h2>
                 <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card/40 shadow-[var(--shadow-elegant)] aspect-video">
                   <iframe
                     className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${lesson.id}`}
+                    src={`https://www.youtube.com/embed/${lesson.youtubeId}`}
                     title={lesson.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
