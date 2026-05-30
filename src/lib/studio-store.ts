@@ -11,6 +11,7 @@ export type PaymentRequest = {
   status: "pending" | "approved" | "rejected";
   createdAt: number;
   code?: string;
+  screenshot?: string; // data URL of receipt image
 };
 
 export type AccessCode = {

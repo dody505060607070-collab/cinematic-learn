@@ -32,18 +32,68 @@ export const Route = createFileRoute("/admin")({
 
 type Tab = "requests" | "codes" | "videos" | "settings";
 
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes
+const ATTEMPT_KEY = "studio_admin_attempts";
+const LOCK_KEY = "studio_admin_lock_until";
+
+function readNum(key: string): number {
+  if (typeof window === "undefined") return 0;
+  const v = Number(localStorage.getItem(key) ?? 0);
+  return Number.isFinite(v) ? v : 0;
+}
+
 function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [lockUntil, setLockUntil] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   const [tab, setTab] = useState<Tab>("requests");
 
-  useEffect(() => { setAuthed(isAdmin()); }, []);
+  useEffect(() => {
+    setAuthed(isAdmin());
+    setAttempts(readNum(ATTEMPT_KEY));
+    setLockUntil(readNum(LOCK_KEY));
+  }, []);
+
+  useEffect(() => {
+    if (lockUntil <= Date.now()) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [lockUntil]);
+
+  const lockedRemaining = Math.max(0, lockUntil - now);
+  const locked = lockedRemaining > 0;
 
   const onLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginAdmin(pw)) { setAuthed(true); setErr(false); }
-    else setErr(true);
+    if (locked) return;
+    if (loginAdmin(pw)) {
+      setAuthed(true); setErr(false);
+      localStorage.removeItem(ATTEMPT_KEY);
+      localStorage.removeItem(LOCK_KEY);
+      setAttempts(0); setLockUntil(0);
+      return;
+    }
+    const next = attempts + 1;
+    setAttempts(next);
+    localStorage.setItem(ATTEMPT_KEY, String(next));
+    setErr(true);
+    setPw("");
+    if (next >= MAX_ATTEMPTS) {
+      const until = Date.now() + LOCKOUT_MS;
+      setLockUntil(until);
+      localStorage.setItem(LOCK_KEY, String(until));
+    }
+  };
+
+  const fmt = (ms: number) => {
+    const s = Math.ceil(ms / 1000);
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}:${String(r).padStart(2, "0")}`;
   };
 
   if (!authed) {
@@ -60,11 +110,26 @@ function AdminPage() {
               type="password"
               value={pw}
               onChange={(e) => { setPw(e.target.value); setErr(false); }}
+              disabled={locked}
               className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition"
               placeholder="••••••••"
             />
-            {err && <p className="mt-3 text-sm text-destructive text-center">Wrong password</p>}
-            <button type="submit" className="mt-6 w-full px-6 py-3 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-transform">Sign in</button>
+            {locked ? (
+              <div className="mt-4 p-3 rounded-xl border border-destructive/40 bg-destructive/10 text-sm text-destructive text-center">
+                Too many attempts. Try again in <span className="font-mono font-semibold">{fmt(lockedRemaining)}</span>.
+              </div>
+            ) : err ? (
+              <p className="mt-3 text-sm text-destructive text-center">
+                Wrong password. {Math.max(0, MAX_ATTEMPTS - attempts)} attempt{MAX_ATTEMPTS - attempts === 1 ? "" : "s"} left.
+              </p>
+            ) : null}
+            <button
+              type="submit"
+              disabled={locked || !pw}
+              className="mt-6 w-full px-6 py-3 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:hover:scale-100"
+            >
+              {locked ? `Locked · ${fmt(lockedRemaining)}` : "Sign in"}
+            </button>
           </form>
         </main>
         <SiteFooter />
@@ -156,6 +221,7 @@ function RequestsTab() {
                   <th className="text-left p-4">Email</th>
                   <th className="text-left p-4">Method</th>
                   <th className="text-left p-4">Reference</th>
+                  <th className="text-left p-4">Proof</th>
                   <th className="text-left p-4">Status</th>
                   <th className="text-left p-4">Code</th>
                   <th className="text-right p-4">Actions</th>
@@ -168,6 +234,15 @@ function RequestsTab() {
                     <td className="p-4 text-muted-foreground">{r.email}</td>
                     <td className="p-4 text-muted-foreground">{r.method}</td>
                     <td className="p-4 text-muted-foreground font-mono text-xs">{r.reference}</td>
+                    <td className="p-4">
+                      {r.screenshot ? (
+                        <a href={r.screenshot} target="_blank" rel="noopener noreferrer" className="block w-14 h-14 rounded-lg overflow-hidden border border-border/60 hover:ring-2 hover:ring-primary/60 transition">
+                          <img src={r.screenshot} alt="proof" className="w-full h-full object-cover" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="p-4">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
                         r.status === "pending" ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
