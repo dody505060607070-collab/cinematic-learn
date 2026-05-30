@@ -6,20 +6,20 @@ export const Route = createFileRoute("/videos")({
   head: () => ({
     meta: [
       { title: "Studio Library — AbdelRahman Studio" },
-      { name: "description", content: "Your private video lessons." },
+      { name: "description", content: "Private video lessons on web design, web development, graphic design, and branding mastery." },
     ],
   }),
   component: VideosPage,
 });
 
 const LESSONS = [
-  { title: "01 · Foundations & Mindset", id: "dQw4w9WgXcQ" },
-  { title: "02 · The First Principles", id: "5qap5aO4i9A" },
-  { title: "03 · Building the System", id: "jfKfPfyJRdk" },
-  { title: "04 · Strategy in Practice", id: "9bZkp7q19f0" },
-  { title: "05 · Advanced Techniques", id: "kXYiU_JCYtU" },
-  { title: "06 · Scaling Your Craft", id: "hTWKbfoikeg" },
-  { title: "07 · Final Masterclass", id: "ZbZSe6N_BXs" },
+  { title: "01 · Web Design Foundations", id: "dQw4w9WgXcQ" },
+  { title: "02 · Web Development — From Zero to Code", id: "5qap5aO4i9A" },
+  { title: "03 · Graphic Design Principles", id: "jfKfPfyJRdk" },
+  { title: "04 · Typography, Layout & Color", id: "9bZkp7q19f0" },
+  { title: "05 · What Is Branding", id: "kXYiU_JCYtU" },
+  { title: "06 · How to Build a Brand from Scratch", id: "hTWKbfoikeg" },
+  { title: "07 · How to Make Your Brand Successful", id: "ZbZSe6N_BXs" },
 ];
 
 function VideosPage() {
@@ -48,7 +48,7 @@ function VideosPage() {
           <div className="text-center mb-16 animate-fade-in">
             <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Studio Library</p>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">Your Masterclasses</h1>
-            <p className="mt-4 text-muted-foreground">Seven cinematic chapters. Watch in order or jump anywhere.</p>
+            <p className="mt-4 text-muted-foreground">Web design, web development, graphic design, and branding — seven chapters to build real skills.</p>
           </div>
 
           <div className="space-y-12">

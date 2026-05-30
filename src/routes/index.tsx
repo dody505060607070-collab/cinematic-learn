@@ -7,8 +7,8 @@ import logo from "@/assets/logo.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AbdelRahman Studio — Private Creative Learning" },
-      { name: "description", content: "A cinematic, invitation-only studio for serious learners. Watch private masterclasses crafted by AbdelRahman." },
+      { title: "AbdelRahman Studio — Learn Design, Dev & Branding" },
+      { name: "description", content: "Private masterclasses on web design, web development, graphic design, and branding. Learn how to build a brand and make it successful." },
       { property: "og:title", content: "AbdelRahman Studio" },
       { property: "og:description", content: "Private creative masterclasses. Invitation only." },
     ],
@@ -69,7 +69,7 @@ function Index() {
             transition={{ delay: 0.45, duration: 0.7 }}
             className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
           >
-            A cinematic studio of private masterclasses. No fluff, no noise — only deep, hand-crafted lessons made for serious creators.
+            Web design, web development, graphic design, and branding — taught with depth. Learn how to build a brand from scratch and make it impossible to ignore.
           </motion.p>
 
           <motion.div
@@ -102,9 +102,9 @@ function Index() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { t: "Cinematic Lessons", d: "Studio-grade video production designed to keep you in deep focus from start to finish." },
-              { t: "Private Access", d: "Manually verified members only. No leaks, no public listings, no algorithm." },
-              { t: "Lifetime Library", d: "Pay once, watch forever. New lessons added throughout the cohort." },
+              { t: "Web Design & Dev", d: "From visual systems to shipped code. Learn how to design and build modern websites that convert." },
+              { t: "Graphic Design", d: "Typography, layout, color theory, and composition — the real craft behind striking visual work." },
+              { t: "Branding Mastery", d: "How to build a brand from zero, position it right, and make it stand out in any market." },
             ].map((f, i) => (
               <motion.div
                 key={i}
