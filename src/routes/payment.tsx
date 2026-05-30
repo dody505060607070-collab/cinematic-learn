@@ -4,9 +4,9 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 export const Route = createFileRoute("/payment")({
   head: () => ({
     meta: [
-      { title: "Get Access — Lumen Private Learning" },
+      { title: "Get Access — AbdelRahman Studio" },
       { name: "description", content: "Submit your payment proof to receive manually-verified access to the private course library." },
-      { property: "og:title", content: "Get Access — Lumen" },
+      { property: "og:title", content: "Get Access — AbdelRahman Studio" },
       { property: "og:description", content: "Manual verification. Lifetime access." },
     ],
   }),

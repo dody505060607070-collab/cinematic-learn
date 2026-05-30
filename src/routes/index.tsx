@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { motion } from "framer-motion";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lumen — Private Learning Platform" },
-      { name: "description", content: "Exclusive video-based learning experience. Cinematic, focused, and crafted for serious learners." },
-      { property: "og:title", content: "Lumen — Private Learning Platform" },
-      { property: "og:description", content: "Exclusive video-based learning experience." },
+      { title: "AbdelRahman Studio — Private Creative Learning" },
+      { name: "description", content: "A cinematic, invitation-only studio for serious learners. Watch private masterclasses crafted by AbdelRahman." },
+      { property: "og:title", content: "AbdelRahman Studio" },
+      { property: "og:description", content: "Private creative masterclasses. Invitation only." },
     ],
   }),
   component: Index,
@@ -16,31 +18,71 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="min-h-screen" style={{ background: "var(--gradient-hero)" }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
+      <div className="pointer-events-none absolute inset-0 noise-overlay opacity-[0.07] mix-blend-overlay" />
+      <div className="pointer-events-none absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-secondary/30 blur-3xl animate-orb-drift" />
+      <div className="pointer-events-none absolute top-1/3 -right-40 w-[480px] h-[480px] rounded-full bg-primary/25 blur-3xl animate-orb-drift" style={{ animationDelay: "-6s" }} />
       <SiteNav />
-      <main className="pt-32">
-        <section className="max-w-5xl mx-auto px-6 pt-20 pb-32 text-center relative">
-          <div className="absolute inset-0 -z-10 blur-3xl opacity-40 pointer-events-none">
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/30" />
-          </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-card/40 backdrop-blur text-xs text-muted-foreground mb-8 animate-fade-in">
+      <main className="pt-32 relative">
+        <section className="max-w-5xl mx-auto px-6 pt-16 pb-32 text-center relative">
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0, rotate: -8 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto mb-10 w-40 h-40 md:w-48 md:h-48"
+          >
+            <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,oklch(0.82_0.17_75),oklch(0.74_0.2_25),oklch(0.55_0.22_305),oklch(0.82_0.17_75))] blur-2xl opacity-70 animate-spin-slow" />
+            <div className="absolute inset-2 rounded-full bg-background" />
+            <div className="absolute inset-0 animate-float-slow">
+              <img
+                src={logo}
+                alt="AbdelRahman"
+                className="relative w-full h-full object-cover rounded-full ring-2 ring-primary/40 shadow-[var(--shadow-glow)]"
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-card/40 backdrop-blur text-xs text-muted-foreground mb-8"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[var(--shadow-glow)]" />
-            Invitation-only access · 2026 cohort
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.05] animate-fade-in">
-            Private Learning
+            Invitation-only · 2026 cohort
+          </motion.div>
+
+          <motion.h1
+            initial={{ y: 24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05]"
+          >
+            <span className="text-foreground">The Private</span>
             <br />
-            <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">Platform</span>
-          </h1>
-          <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
-            Exclusive video-based learning experience. No noise, no fluff — just deep, cinematic lessons crafted for serious learners.
-          </p>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4 animate-fade-in">
+            <span className="text-shimmer">AbdelRahman Studio</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.45, duration: 0.7 }}
+            className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+          >
+            A cinematic studio of private masterclasses. No fluff, no noise — only deep, hand-crafted lessons made for serious creators.
+          </motion.p>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.7 }}
+            className="mt-12 flex flex-wrap items-center justify-center gap-4"
+          >
             <Link
               to="/access"
               className="px-8 py-4 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-105 transition-transform"
             >
-              Enter Course
+              Enter Studio
             </Link>
             <Link
               to="/payment"
@@ -48,14 +90,14 @@ function Index() {
             >
               Get Access
             </Link>
-          </div>
+          </motion.div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-6 pb-24">
+        <section className="max-w-6xl mx-auto px-6 pb-24 relative">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">A different kind of course</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">A different kind of studio</h2>
             <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-              Built around clarity and depth. Every lesson is hand-produced, distraction-free, and accessible only to verified members.
+              Built around clarity, taste, and depth. Every lesson is hand-produced, distraction-free, and reserved for verified members.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -64,14 +106,19 @@ function Index() {
               { t: "Private Access", d: "Manually verified members only. No leaks, no public listings, no algorithm." },
               { t: "Lifetime Library", d: "Pay once, watch forever. New lessons added throughout the cohort." },
             ].map((f, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="group relative p-8 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl hover:border-primary/40 transition-[var(--transition-smooth)] hover:-translate-y-1"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -6 }}
+                className="group relative p-8 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-xl hover:border-primary/40 transition-colors"
               >
-                <div className="w-10 h-10 rounded-xl bg-[image:var(--gradient-primary)] mb-6 shadow-[var(--shadow-glow)] group-hover:scale-110 transition-transform" />
+                <div className="w-10 h-10 rounded-xl bg-[image:var(--gradient-primary)] mb-6 shadow-[var(--shadow-glow)] group-hover:scale-110 group-hover:rotate-6 transition-transform" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">{f.t}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.d}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
