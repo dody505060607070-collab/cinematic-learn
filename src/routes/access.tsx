@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/access")({
   head: () => ({
     meta: [
-      { title: "Enter Access Code — Lumen" },
+      { title: "Enter Access Code — AbdelRahman Studio" },
       { name: "description", content: "Unlock your private course library with your access code." },
     ],
   }),
@@ -26,7 +27,7 @@ function AccessPage() {
     setError(false);
     setTimeout(() => {
       if (code.trim().toUpperCase() === VALID_CODE) {
-        try { localStorage.setItem("lumen_access", "1"); } catch {}
+        try { localStorage.setItem("studio_access", "1"); } catch {}
         navigate({ to: "/videos" });
       } else {
         setError(true);
@@ -41,7 +42,10 @@ function AccessPage() {
       <main className="flex-1 flex items-center justify-center px-6 py-32">
         <div className="w-full max-w-md animate-fade-in">
           <div className="text-center mb-10">
-            <div className="inline-flex w-14 h-14 rounded-2xl bg-[image:var(--gradient-primary)] shadow-[var(--shadow-glow)] mb-6" />
+            <div className="relative inline-flex w-16 h-16 mb-6">
+              <span className="absolute inset-0 rounded-full bg-[image:var(--gradient-primary)] blur-lg opacity-80" />
+              <img src={logo} alt="AbdelRahman Studio" className="relative w-16 h-16 rounded-full object-cover ring-2 ring-primary/40" />
+            </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Enter Access Code</h1>
             <p className="mt-3 text-muted-foreground text-sm">Members only. Codes are issued after verification.</p>
           </div>

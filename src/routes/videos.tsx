@@ -5,7 +5,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 export const Route = createFileRoute("/videos")({
   head: () => ({
     meta: [
-      { title: "Course Library — Lumen" },
+      { title: "Studio Library — AbdelRahman Studio" },
       { name: "description", content: "Your private video lessons." },
     ],
   }),
@@ -28,7 +28,10 @@ function VideosPage() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("lumen_access") === "1") setAllowed(true);
+      if (
+        localStorage.getItem("studio_access") === "1" ||
+        localStorage.getItem("lumen_access") === "1"
+      ) setAllowed(true);
       else navigate({ to: "/access" });
     } catch {
       navigate({ to: "/access" });
@@ -43,8 +46,8 @@ function VideosPage() {
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
-            <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Course Library</p>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">Your Lessons</h1>
+            <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Studio Library</p>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">Your Masterclasses</h1>
             <p className="mt-4 text-muted-foreground">Seven cinematic chapters. Watch in order or jump anywhere.</p>
           </div>
 
