@@ -221,6 +221,7 @@ function RequestsTab() {
                   <th className="text-left p-4">Email</th>
                   <th className="text-left p-4">Method</th>
                   <th className="text-left p-4">Reference</th>
+                  <th className="text-left p-4">Proof</th>
                   <th className="text-left p-4">Status</th>
                   <th className="text-left p-4">Code</th>
                   <th className="text-right p-4">Actions</th>
@@ -233,6 +234,15 @@ function RequestsTab() {
                     <td className="p-4 text-muted-foreground">{r.email}</td>
                     <td className="p-4 text-muted-foreground">{r.method}</td>
                     <td className="p-4 text-muted-foreground font-mono text-xs">{r.reference}</td>
+                    <td className="p-4">
+                      {r.screenshot ? (
+                        <a href={r.screenshot} target="_blank" rel="noopener noreferrer" className="block w-14 h-14 rounded-lg overflow-hidden border border-border/60 hover:ring-2 hover:ring-primary/60 transition">
+                          <img src={r.screenshot} alt="proof" className="w-full h-full object-cover" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="p-4">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
                         r.status === "pending" ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
