@@ -26,7 +26,7 @@ function AccessPage() {
     setError(false);
     setTimeout(() => {
       if (code.trim().toUpperCase() === VALID_CODE) {
-        try { sessionStorage.setItem("lumen_access", "1"); } catch {}
+        try { localStorage.setItem("lumen_access", "1"); } catch {}
         navigate({ to: "/videos" });
       } else {
         setError(true);

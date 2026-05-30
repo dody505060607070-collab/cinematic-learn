@@ -28,7 +28,7 @@ function VideosPage() {
 
   useEffect(() => {
     try {
-      if (sessionStorage.getItem("lumen_access") === "1") setAllowed(true);
+      if (localStorage.getItem("lumen_access") === "1") setAllowed(true);
       else navigate({ to: "/access" });
     } catch {
       navigate({ to: "/access" });
