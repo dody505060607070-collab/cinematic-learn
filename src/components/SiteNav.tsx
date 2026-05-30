@@ -29,6 +29,7 @@ export function SiteNav() {
           <Link to="/payment" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Pricing</Link>
           <Link to="/access" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Access</Link>
           <a href="https://abdelrahman-studi0.lovable.app" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Portfolio</a>
+          <Link to="/admin" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Admin</Link>
         </div>
         <Link
           to="/access"

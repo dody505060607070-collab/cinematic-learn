@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { addRequest } from "@/lib/studio-store";
 
 export const Route = createFileRoute("/payment")({
   head: () => ({
@@ -13,14 +15,50 @@ export const Route = createFileRoute("/payment")({
   component: PaymentPage,
 });
 
-const FORM_URL = "https://forms.gle/your-form-id-here";
+const WHATSAPP_NUMBER = "201222576172"; // screenshot submission
+const RECEIVE_PHONE = "+20 122 164 1717"; // InstaPay / Vodafone Cash
+const PAYONEER_ID = "78973085";
+const ADMIN_EMAIL = "dody505060607070@gmail.com";
+
+type Method = "Payoneer" | "InstaPay" | "Vodafone Cash";
 
 function PaymentPage() {
+  const [copied, setCopied] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [method, setMethod] = useState<Method>("InstaPay");
+  const [reference, setReference] = useState("");
+  const [note, setNote] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const copy = (text: string, label: string) => {
+    navigator.clipboard?.writeText(text);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  const waLink = (extra?: string) => {
+    const msg = encodeURIComponent(
+      `Hi AbdelRahman Studio 👋\nI just sent a payment via ${method}.\nName: ${name || "—"}\nEmail: ${email || "—"}\nReference: ${reference || "—"}${extra ? `\n${extra}` : ""}\n(Screenshot attached)`
+    );
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !reference) return;
+    addRequest({ name, email, method, reference, note });
+    setSubmitted(true);
+    // Open WhatsApp to send screenshot
+    window.open(waLink(), "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--gradient-hero)" }}>
       <SiteNav />
       <main className="pt-40 pb-20 px-6">
-        <div className="max-w-2xl mx-auto text-center animate-fade-in">
+        <div className="max-w-3xl mx-auto animate-fade-in">
+         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Step 01</p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">Get Access</h1>
           <p className="mt-6 text-lg text-muted-foreground">
@@ -30,13 +68,14 @@ function PaymentPage() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-              dody505060607070@gmail.com
+              {ADMIN_EMAIL}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
-              +20 122 164 1717
+              {RECEIVE_PHONE}
             </span>
           </div>
+         </div>
 
           <div className="mt-12 p-8 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-xl text-left shadow-[var(--shadow-elegant)]">
             <div className="flex items-baseline justify-between pb-6 border-b border-border/60">
@@ -44,32 +83,110 @@ function PaymentPage() {
               <span className="text-3xl font-bold text-foreground">$3<span className="text-base font-normal text-muted-foreground"> / 150 EGP</span></span>
             </div>
 
-            <div className="mt-6 space-y-3">
-              <p className="text-sm font-semibold text-foreground">Accepted payment methods:</p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">PayPal</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Bank Transfer</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">Vodafone Cash</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">InstaPay</span>
+            <div className="mt-6 space-y-4">
+              <p className="text-sm font-semibold text-foreground">Choose a payment method:</p>
+
+              {/* Payoneer */}
+              <div className="p-5 rounded-xl border border-border/60 bg-background/40">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Payoneer</p>
+                    <p className="text-xs text-muted-foreground">Send directly to my Payoneer ID</p>
+                  </div>
+                  <button type="button" onClick={() => copy(PAYONEER_ID, "payoneer")} className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition">
+                    {copied === "payoneer" ? "Copied!" : `ID: ${PAYONEER_ID} · Copy`}
+                  </button>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">Contact us at <span className="text-foreground">+20 122 164 1717</span> for payment details.</p>
+
+              {/* InstaPay */}
+              <div className="p-5 rounded-xl border border-border/60 bg-background/40">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">InstaPay</p>
+                    <p className="text-xs text-muted-foreground">Send to the phone number below</p>
+                  </div>
+                  <button type="button" onClick={() => copy(RECEIVE_PHONE, "instapay")} className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition">
+                    {copied === "instapay" ? "Copied!" : `${RECEIVE_PHONE} · Copy`}
+                  </button>
+                </div>
+              </div>
+
+              {/* Vodafone Cash */}
+              <div className="p-5 rounded-xl border border-border/60 bg-background/40">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Vodafone Cash</p>
+                    <p className="text-xs text-muted-foreground">Send to the same phone number</p>
+                  </div>
+                  <button type="button" onClick={() => copy(RECEIVE_PHONE, "vcash")} className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition">
+                    {copied === "vcash" ? "Copied!" : `${RECEIVE_PHONE} · Copy`}
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <ol className="mt-8 space-y-4 text-sm text-foreground/90 pt-6 border-t border-border/60">
-              <li className="flex gap-3"><span className="text-primary font-semibold">1.</span> Complete payment using your preferred method.</li>
-              <li className="flex gap-3"><span className="text-primary font-semibold">2.</span> Take a clear screenshot of the receipt.</li>
-              <li className="flex gap-3"><span className="text-primary font-semibold">3.</span> Submit it through the secure form below.</li>
-              <li className="flex gap-3"><span className="text-primary font-semibold">4.</span> Receive your access code by email within 24 hours.</li>
+            <ol className="mt-8 space-y-3 text-sm text-foreground/90 pt-6 border-t border-border/60">
+              <li className="flex gap-3"><span className="text-primary font-semibold">1.</span> Pay $3 / 150 EGP via Payoneer, InstaPay, or Vodafone Cash.</li>
+              <li className="flex gap-3"><span className="text-primary font-semibold">2.</span> Screenshot the receipt.</li>
+              <li className="flex gap-3"><span className="text-primary font-semibold">3.</span> Fill the form below and send the screenshot on WhatsApp to <span className="text-foreground font-medium">+20 122 257 6172</span>.</li>
+              <li className="flex gap-3"><span className="text-primary font-semibold">4.</span> Admin approves your request — your access code arrives by email.</li>
             </ol>
 
-            <a
-              href={FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 w-full inline-flex items-center justify-center px-6 py-4 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-transform"
-            >
-              Submit Payment Proof
-            </a>
+            {/* Submission form */}
+            <form onSubmit={onSubmit} className="mt-8 pt-6 border-t border-border/60 space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Full name</label>
+                  <input value={name} onChange={(e) => setName(e.target.value)} required className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition" placeholder="Your name" />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Email</label>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition" placeholder="you@email.com" />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Method used</label>
+                  <select value={method} onChange={(e) => setMethod(e.target.value as Method)} className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition">
+                    <option>Payoneer</option>
+                    <option>InstaPay</option>
+                    <option>Vodafone Cash</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Reference / your phone</label>
+                  <input value={reference} onChange={(e) => setReference(e.target.value)} required className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition" placeholder="Tx ID or sender number" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Note (optional)</label>
+                <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition" placeholder="Anything else we should know" />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-transform"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.94 11.94 0 0012.04 0C5.5 0 .2 5.3.2 11.84c0 2.08.55 4.1 1.6 5.9L0 24l6.42-1.68a11.84 11.84 0 005.62 1.43h.01c6.54 0 11.84-5.3 11.84-11.84 0-3.16-1.23-6.13-3.37-8.43zM12.05 21.5h-.01a9.66 9.66 0 01-4.93-1.35l-.36-.21-3.81 1 1.02-3.71-.23-.38a9.65 9.65 0 01-1.48-5.01c0-5.34 4.35-9.69 9.7-9.69 2.59 0 5.02 1.01 6.85 2.84a9.62 9.62 0 012.84 6.86c0 5.34-4.35 9.65-9.59 9.65zm5.32-7.23c-.29-.15-1.72-.85-1.99-.95-.27-.1-.46-.15-.66.15-.2.29-.76.95-.93 1.14-.17.2-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.58-.9-2.17-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.52.07-.79.37-.27.29-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.71.22 1.36.19 1.87.12.57-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.27-.19-.56-.34z"/></svg>
+                {submitted ? "Re-open WhatsApp to send screenshot" : "Submit & Send Payment Proof on WhatsApp"}
+              </button>
+
+              {submitted && (
+                <div className="p-4 rounded-xl border border-primary/30 bg-primary/10 text-sm text-foreground">
+                  ✅ Request submitted. Please send your screenshot on WhatsApp to <span className="font-semibold">+20 122 257 6172</span>. Admin will approve shortly.
+                </div>
+              )}
+
+              <a
+                href={waLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-sm text-primary hover:underline"
+              >
+                Or open WhatsApp directly →
+              </a>
+            </form>
           </div>
 
           <div className="mt-8 p-5 rounded-xl border border-primary/20 bg-primary/5 text-sm text-muted-foreground">

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import logo from "@/assets/logo.png";
+import { isCodeValid } from "@/lib/studio-store";
 
 export const Route = createFileRoute("/access")({
   head: () => ({
@@ -12,8 +13,6 @@ export const Route = createFileRoute("/access")({
   }),
   component: AccessPage,
 });
-
-const VALID_CODE = "FREE2026";
 
 function AccessPage() {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ function AccessPage() {
     setLoading(true);
     setError(false);
     setTimeout(() => {
-      if (code.trim().toUpperCase() === VALID_CODE) {
+      if (isCodeValid(code)) {
         try { localStorage.setItem("studio_access", "1"); } catch {}
         navigate({ to: "/videos" });
       } else {
