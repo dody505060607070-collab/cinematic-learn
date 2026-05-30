@@ -27,10 +27,17 @@ function PaymentPage() {
             One-time payment. Lifetime access to masterclasses on web design, web development, graphic design, and branding.
           </p>
 
+          <div className="mt-6 flex items-center justify-center gap-3 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+              dody505060607070@gmail.com
+            </span>
+          </div>
+
           <div className="mt-12 p-8 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-xl text-left shadow-[var(--shadow-elegant)]">
             <div className="flex items-baseline justify-between pb-6 border-b border-border/60">
               <span className="text-sm text-muted-foreground">Lifetime Membership</span>
-              <span className="text-3xl font-bold text-foreground">$149<span className="text-base font-normal text-muted-foreground"> once</span></span>
+              <span className="text-3xl font-bold text-foreground">$3<span className="text-base font-normal text-muted-foreground"> / 150 EGP</span></span>
             </div>
             <ol className="mt-6 space-y-4 text-sm text-foreground/90">
               <li className="flex gap-3"><span className="text-primary font-semibold">1.</span> Complete payment using the provided method.</li>
