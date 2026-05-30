@@ -28,6 +28,7 @@ export function SiteNav() {
           <Link to="/" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Home</Link>
           <Link to="/payment" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Pricing</Link>
           <Link to="/access" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Access</Link>
+          <a href="https://abdelrahman-studi0.lovable.app" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Portfolio</a>
         </div>
         <Link
           to="/access"
@@ -45,7 +46,7 @@ export function SiteFooter() {
     <footer className="border-t border-border/40 mt-32">
       <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
         <p>© {new Date().getFullYear()} AbdelRahman Studio. All rights reserved.</p>
-        <p>Crafted with obsession for the craft.</p>
+        <a href="https://abdelrahman-studi0.lovable.app" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Portfolio</a>
       </div>
     </footer>
   );
