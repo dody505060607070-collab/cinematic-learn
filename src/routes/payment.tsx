@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { addRequest } from "@/lib/studio-store";
 
@@ -30,6 +30,10 @@ function PaymentPage() {
   const [reference, setReference] = useState("");
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const copy = (text: string, label: string) => {
     navigator.clipboard?.writeText(text);
@@ -44,12 +48,59 @@ function PaymentPage() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onPickFile = async (f: File | null) => {
+    if (!f) { setScreenshot(null); setPreview(null); return; }
+    if (!f.type.startsWith("image/")) { alert("Please upload an image file."); return; }
+    if (f.size > 5 * 1024 * 1024) { alert("Image must be under 5MB."); return; }
+    setScreenshot(f);
+    const reader = new FileReader();
+    reader.onload = () => setPreview(reader.result as string);
+    reader.readAsDataURL(f);
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !reference) return;
-    addRequest({ name, email, method, reference, note });
+
+    // Persist request (with screenshot data URL) so admin can see it.
+    let dataUrl: string | undefined;
+    if (screenshot) {
+      dataUrl = await new Promise<string>((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.readAsDataURL(screenshot);
+      });
+    }
+    addRequest({ name, email, method, reference, note, screenshot: dataUrl });
     setSubmitted(true);
-    // Open WhatsApp to send screenshot
+
+    // Try to share the file directly to WhatsApp via the OS share sheet.
+    const text = `Hi AbdelRahman Studio 👋\nI just sent a payment via ${method}.\nName: ${name}\nEmail: ${email}\nReference: ${reference}${note ? `\nNote: ${note}` : ""}`;
+    const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean; share?: (d: ShareData) => Promise<void> };
+
+    if (screenshot && nav.canShare && nav.canShare({ files: [screenshot] })) {
+      try {
+        await nav.share!({ files: [screenshot], text, title: "Payment proof" });
+        setShareStatus("Shared via your device — pick WhatsApp to send to +20 122 257 6172.");
+        return;
+      } catch {
+        // user cancelled or share failed → fall through
+      }
+    }
+
+    // Fallback: copy the image to clipboard (so the user can paste in WhatsApp) + open chat.
+    if (screenshot && "clipboard" in navigator && "write" in navigator.clipboard) {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ [screenshot.type]: screenshot }),
+        ]);
+        setShareStatus("Screenshot copied to clipboard — paste it (Ctrl/Cmd+V) in the WhatsApp chat that just opened.");
+      } catch {
+        setShareStatus("WhatsApp opened. Please attach your screenshot manually in the chat.");
+      }
+    } else {
+      setShareStatus("WhatsApp opened. Please attach your screenshot manually in the chat.");
+    }
     window.open(waLink(), "_blank", "noopener,noreferrer");
   };
 
@@ -164,6 +215,39 @@ function PaymentPage() {
                 <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl bg-input border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition" placeholder="Anything else we should know" />
               </div>
 
+              <div>
+                <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Payment screenshot</label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+                  className="hidden"
+                />
+                {!preview ? (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="w-full flex flex-col items-center justify-center gap-2 px-6 py-8 rounded-xl border-2 border-dashed border-border/60 bg-background/30 hover:border-primary/60 hover:bg-primary/5 transition text-muted-foreground"
+                  >
+                    <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                    <span className="text-sm"><span className="text-foreground font-medium">Click to upload</span> your receipt screenshot</span>
+                    <span className="text-xs">PNG, JPG, WEBP · up to 5MB</span>
+                  </button>
+                ) : (
+                  <div className="relative rounded-xl overflow-hidden border border-border/60 bg-background/30">
+                    <img src={preview} alt="Payment receipt preview" className="w-full max-h-72 object-contain" />
+                    <div className="flex items-center justify-between p-3 border-t border-border/60 bg-card/60">
+                      <span className="text-xs text-muted-foreground truncate">{screenshot?.name}</span>
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => fileRef.current?.click()} className="px-3 py-1.5 rounded-full text-xs border border-border/60 text-foreground hover:bg-card/70 transition">Replace</button>
+                        <button type="button" onClick={() => onPickFile(null)} className="px-3 py-1.5 rounded-full text-xs border border-destructive/40 text-destructive hover:bg-destructive/10 transition">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-[image:var(--gradient-primary)] text-primary-foreground font-medium shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-transform"
@@ -174,7 +258,7 @@ function PaymentPage() {
 
               {submitted && (
                 <div className="p-4 rounded-xl border border-primary/30 bg-primary/10 text-sm text-foreground">
-                  ✅ Request submitted. Please send your screenshot on WhatsApp to <span className="font-semibold">+20 122 257 6172</span>. Admin will approve shortly.
+                  ✅ Request submitted to admin. {shareStatus ?? `Please send your screenshot on WhatsApp to +20 122 257 6172.`}
                 </div>
               )}
 
