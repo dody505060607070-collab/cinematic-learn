@@ -37,7 +37,7 @@ function PaymentPage() {
           <div className="mt-12 p-8 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-xl text-left shadow-[var(--shadow-elegant)]">
             <div className="flex items-baseline justify-between pb-6 border-b border-border/60">
               <span className="text-sm text-muted-foreground">Lifetime Membership</span>
-              <span className="text-3xl font-bold text-foreground">$149<span className="text-base font-normal text-muted-foreground"> once</span></span>
+              <span className="text-3xl font-bold text-foreground">$3<span className="text-base font-normal text-muted-foreground"> / 150 EGP</span></span>
             </div>
             <ol className="mt-6 space-y-4 text-sm text-foreground/90">
               <li className="flex gap-3"><span className="text-primary font-semibold">1.</span> Complete payment using the provided method.</li>
